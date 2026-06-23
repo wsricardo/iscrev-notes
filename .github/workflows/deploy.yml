@@ -1,0 +1,62 @@
+name: Deploy to iScrev Docs
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # Dispara apenas quando criar tag estilo v1.0.0
+  workflow_dispatch:  # Permite disparar manualmente via botão no GitHub Actions
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout App Repository
+        uses: actions/checkout@v4
+        with:
+          path: 'app-repo'
+
+      - name: Checkout Website Repository
+        uses: actions/checkout@v4
+        with:
+          repository: 'wsricardo/iscrev'  # Nome do repositorio institucional
+          token: ${{ secrets.DEPLOY_TOKEN }}
+          path: 'site-repo'
+
+      - name: Sync App Files to Docs
+        run: |
+          echo "Copying files to docs directory..."
+          
+          # Root files from app-repo/src
+          cp app-repo/src/diario.html site-repo/docs/
+          cp app-repo/src/manifest.json site-repo/docs/
+          cp app-repo/src/service-worker.js site-repo/docs/
+          
+          # CSS
+          mkdir -p site-repo/docs/assets/css
+          cp app-repo/src/assets/css/diario.css site-repo/docs/assets/css/
+          
+          # JS
+          mkdir -p site-repo/docs/assets/js/diario
+          cp app-repo/src/assets/js/diario.js site-repo/docs/assets/js/
+          cp -r app-repo/src/assets/js/diario/* site-repo/docs/assets/js/diario/
+          
+          # Icones de imagem
+          mkdir -p site-repo/docs/assets/img
+          cp app-repo/src/assets/img/icon-192.png site-repo/docs/assets/img/ || true
+          cp app-repo/src/assets/img/icon-512.png site-repo/docs/assets/img/ || true
+          cp app-repo/src/assets/img/favicon.svg site-repo/docs/assets/img/ || true
+
+      - name: Commit and Push to Website Repo
+        run: |
+          cd site-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/
+          
+          # Apenas commit se houver mudancas
+          if ! git diff-index --quiet HEAD; then
+            git commit -m "chore: deploy iscrev-notes release ${{ github.ref_name }}"
+            git push origin main
+          else
+            echo "No changes to deploy."
+          fi

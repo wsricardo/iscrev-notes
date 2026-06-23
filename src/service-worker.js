@@ -1,10 +1,9 @@
-const CACHE = "iscrev-notes-v10.12"
+const CACHE = "iscrev-notes-v11.0.0"
 const ASSETS = [
-    "./", "./diario.html", "./assets/css/diario.css", "./assets/css/style.css",
-    "./assets/js/diario.js", "./assets/js/site-nav.js", "./assets/js/ui.js",
+    "./", "./diario.html", "./assets/css/diario.css",
+    "./assets/js/diario.js",
     "https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css",
-    "https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js",
-    "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,500;1,400&family=Dancing+Script:wght@600&family=JetBrains+Mono:wght@400;500&display=swap"
+    "https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"
 ]
 
 self.addEventListener("install", e => {
